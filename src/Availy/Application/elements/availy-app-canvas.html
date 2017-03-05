@@ -1,0 +1,47 @@
+<!-- elements -->
+<link rel="import" href="../../../../bower_components/polymer/polymer.html"/>
+<!-- styles (shared styles are loaded once via page template) -->
+<link rel="import" href="../elements/availy-fonts.html"/>
+
+<dom-module id="availy-app-canvas">
+    <template>
+        <style include="shared-styles availy-fonts">
+            :host {
+                display: block;
+                flex: 1 0 calc(100vh - 60px);
+                overflow: auto;
+                box-sizing: border-box;
+                font-family: "Open Sans Light", sans-serif;
+                background: #fff;
+                padding: 20px 40px;
+                opacity: 0;
+                transition: opacity 400ms;
+            }
+
+            :host ::content h1 {
+                color: #fff;
+            }
+
+            :host ::content a {
+                color: #fff;
+            }
+        </style>
+
+        <section>
+            <content></content>
+        </section>
+    </template>
+
+    <script>
+        Polymer({
+            // register element
+            is: 'availy-app-canvas',
+
+            attached: function () {
+                this.async(function () {
+                    this.style.opacity = 1;
+                }, 250);
+            }
+        });
+    </script>
+</dom-module>

@@ -1,0 +1,105 @@
+<!-- elements -->
+<link rel="import" href="../../../../bower_components/polymer/polymer.html"/>
+<!-- styles (shared styles are loaded once via page template) -->
+<link rel="import" href="availy-fonts.html"/>
+
+<dom-module id="availy-month-nav">
+    <template>
+        <style include="shared-styles availy-fonts">
+            :host {
+                display: inline-block;
+                box-sizing: border-box;
+                font-family: "Open Sans Light", sans-serif;
+                -webkit-user-select: none; /* Chrome/Safari */
+                -moz-user-select: none; /* Firefox */
+                -ms-user-select: none; /* IE10+ */
+            }
+
+            a {
+                display: inline-block;
+                width: 21px;
+                height: 21px;
+                border-radius: 12px;
+                background-color: #ddd;
+                border: 1px solid #ddd;
+                cursor: pointer;
+                font-size: 16px;
+                line-height: 20px;
+                font-family: sans-serif;
+                color: #fff;
+                text-align: center;
+            }
+
+            .month {
+                display: inline-block;
+                width: 150px;
+                text-align: center;
+                font-family: "Open Sans", sans-serif;
+            }
+        </style>
+        <a class="prev" on-tap="moveBack">«</a>
+        <span class="month">[[monthLabel]] [[year]]</span>
+        <a class="next" on-tap="moveForward">»</a>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'availy-month-nav',
+
+            properties: {
+                monthLabels: {
+                    type: Array,
+                    value: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+                },
+                year: {
+                    type: Number,
+                    notify: true
+                },
+                month: {
+                    type: String,
+                    notify: true
+                },
+                monthLabel: {
+                    type: String,
+                    computed: 'computeMonthLabel(month)'
+                }
+            },
+
+            ready: function () {
+                this.initDate();
+            },
+
+            initDate: function () {
+                var now = new Date();
+                this.set('month', now.getMonth());
+                this.set('year', now.getFullYear());
+            },
+
+            computeMonthLabel: function (month) {
+                return this.monthLabels[month];
+            },
+
+            moveBack: function () {
+                var newMonth = this.month - 1;
+                var newYear = this.year;
+                if (newMonth === -1) {
+                    newMonth = 11;
+                    newYear--;
+                }
+                this.set('month', newMonth);
+                this.set('year', newYear);
+            },
+
+            moveForward: function () {
+                var newMonth = this.month + 1;
+                var newYear = this.year;
+                if (newMonth === 12) {
+                    newMonth = 0;
+                    newYear++;
+                }
+                this.set('month', newMonth);
+                this.set('year', newYear);
+            }
+        });
+    </script>
+</dom-module>

@@ -1,0 +1,350 @@
+<!-- elements -->
+<link rel="import" href="../../../../bower_components/polymer/polymer.html"/>
+<link rel="import" href="../../../../bower_components/iron-ajax/iron-ajax.html"/>
+<link rel="import" href="../../../MomentJs/moment-js.html"/>
+<link rel="import" href="availy-month-nav.html"/>
+<!-- styles (shared styles are loaded once via page template) -->
+<link rel="import" href="availy-fonts.html"/>
+
+<dom-module id="availy-calendar">
+    <template>
+        <style include="shared-styles availy-fonts">
+            :host {
+                display: block;
+                height: calc(100vh - 30px);
+                box-sizing: border-box;
+                font-family: "Open Sans Light", sans-serif;
+                max-width: 1024px;
+                min-width: 850px;
+                margin: 0 auto;
+                position: relative;
+                color: var(--availy-black-2);
+            }
+
+            /* header */
+
+            header {
+                display: flex;
+                flex-direction: row;
+                font-family: "Open Sans", sans-serif;
+                padding-bottom: 20px;
+            }
+
+            availy-month-nav {
+                flex: 0 0 220px;
+            }
+
+            .rates {
+                flex: 1 1 auto;
+                text-align: right;
+                font-family: "Open Sans Light", sans-serif;
+            }
+
+            .rate {
+                display: inline-block;
+                color: var(--availy-black-1);
+                margin-left: 16px;
+            }
+
+            strong {
+                font-family: "Open Sans", sans-serif;
+            }
+
+            /* calendar */
+
+            .month {
+                display: flex;
+                flex-direction: column;
+                min-height: calc(100vh - 90px);
+            }
+
+            .week {
+                display: flex;
+                flex-direction: row;
+                flex: 1 0 18%;
+                min-height: 100px;
+                align-items: stretch;
+            }
+
+            .week:first-child {
+                border-top: 1px solid var(--availy-gray-2);
+            }
+
+            .day {
+                flex: 0 0 20%;
+                box-sizing: border-box;
+                padding: 8px;
+                align-items: stretch;
+                border-bottom: 1px solid var(--availy-gray-2);
+                border-right: 1px solid var(--availy-gray-2);
+                position: relative;
+                min-width: 100px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .day:first-child {
+                border-left: 1px solid var(--availy-gray-2);
+            }
+
+            .day[data-other-month="true"] > * {
+                opacity: 0.3;
+            }
+
+            .day > .number {
+                font-size: 0.9em;
+                position: absolute;
+                left: 8px;
+                top: 8px;
+                font-family: "Open Sans", sans-serif;
+            }
+
+            /* availability */
+
+            .day > .availability {
+                font-size: 0.9em;
+                position: absolute;
+                right: 8px;
+                top: 8px;
+                text-align: right;
+                color: var(--availy-green-1);
+                font-family: "Open Sans", sans-serif;
+            }
+
+            .day > .availability:after {
+                content: ' open';
+            }
+
+            .day > .availability[data-hours="0"] {
+                color: #ddd;
+            }
+
+            /* overbooked */
+
+            .day > .availability[data-overbooked="true"] {
+                color: var(--availy-red-1);
+            }
+
+            .day > .availability[data-overbooked="true"]:after {
+                content: '!';
+            }
+
+            /* blocks */
+
+            .blocks {
+                padding-top: 28px;
+            }
+
+            .block {
+                background-color: #eef9ff;
+                border-radius: 2px;
+                margin-bottom: 4px;
+                padding: 2px 8px;
+                font-size: 0.8em;
+                display: flex;
+                flex-direction: row;
+                color: #0099c1;
+            }
+
+            .block .label {
+                flex: 1 1 80%;
+            }
+
+            .block .hours {
+                flex: 1 1 20%;
+                text-align: right;
+            }
+
+            /* away/vacation */
+
+            .day > .availability[data-vacation="true"] {
+                display: none;
+            }
+
+            .day > .availability[data-vacation="true"] + .blocks .block {
+                background-color: #eee;
+                color: #999;
+            }
+
+            .day > .availability[data-vacation="true"] + .blocks .block .hours {
+                display: none;
+            }
+
+        </style>
+        <header>
+            <availy-month-nav month="{{month}}" year="{{year}}"></availy-month-nav>
+            <div class="rates">
+                <strong>Rates:</strong>
+                <span class="rate">Concept / Design / Development: <strong>100€/h</strong></span>
+                <span class="rate">Content Management / Maintenance: <strong>50€/h</strong></span>
+            </div>
+        </header>
+
+        <div class="month" data-month$="{{month}}">
+            <template is="dom-repeat" items="{{weeks}}">
+                <div class="week">
+                    <template is="dom-repeat" items="{{item}}">
+                        <div class="day" data-other-month$="{{item.otherMonth}}">
+                            <span class="number">{{item.number}}</span>
+                            <span class="availability"
+                                  data-hours$="{{item.availability}}"
+                                  data-vacation$="{{item.vacation}}"
+                                  data-overbooked$="{{item.overbooked}}">{{item.availability}}h</span>
+                            <div class="blocks">
+                                <template is="dom-repeat" items="{{item.blocks}}">
+                                    <div class="block">
+                                        <span class="label">{{item.label}}</span>
+                                        <span class="hours">{{item.hours}}h</span>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+        </div>
+
+        <iron-ajax id="allocations" url="{{allocationsHref}}" handle-as="json" last-response="{{allocations}}"></iron-ajax>
+        <iron-ajax id="vacations" url="{{vacationsHref}}" handle-as="json" last-response="{{vacations}}"></iron-ajax>
+    </template>
+
+    <script>
+        //noinspection JSUnusedGlobalSymbols
+        Polymer({
+            is: 'availy-calendar',
+
+            properties: {
+                weeks: Array,
+                allocationsHref: String,
+                allocations: Array,
+                vacationsHref: String,
+                vacations: Array,
+                maxHours: {
+                    type: Number,
+                    value: 6.5
+                }
+            },
+
+            observers: [
+                'drawMonth(month, year)',
+                'drawMonth(allocations)',
+                'drawMonth(vacations)',
+                'fetchAllocations(allocationsHref)',
+                'fetchVacations(vacationsHref)'
+            ],
+
+            fetchAllocations: function () {
+                if (this.allocationsHref) {
+                    this.$.allocations.generateRequest();
+                }
+            },
+
+            fetchVacations: function () {
+                if (this.vacationsHref) {
+                    this.$.vacations.generateRequest();
+                }
+            },
+
+            drawMonth: function () {
+                this.debounce('draw', function () {
+                    this.drawWeeks(this.month, this.year);
+                });
+            },
+
+            drawWeeks: function (month, year) {
+                var start = moment(new Date(year, month, 1));
+                var end = moment(new Date(year, month, 1)).endOf('month');
+                // start on a monday
+                while (start.day() !== 1) {
+                    start.day(start.day() - 1);
+                }
+                // end on a sunday
+                while (end.day() !== 0) {
+                    end.day(end.day() + 1);
+                }
+                // build weeks
+                var weeks = [];
+                var week = [];
+                var day = start;
+                while (day.isSameOrBefore(end, 'day')) {
+                    week.push(this.getDayData(day));
+                    // proceed
+                    day.day(day.day() + 1);
+                    // skip sat/sun
+                    while (day.day() === 6 || day.day() === 0) {
+                        day.day(day.day() + 1);
+                    }
+                    if (week.length === 5) {
+                        weeks.push(week);
+                        week = [];
+                    }
+                }
+                this.set('weeks', weeks);
+            },
+
+            getDayData: function (day) {
+                var allocation = this.getAllocation(day, this.allocations, this.vacations);
+                return {
+                    number: day.format('ddd Do'),
+                    otherMonth: day.month() !== this.month ? 'true' : 'false',
+                    availability: allocation.availability,
+                    overbooked: allocation.availability < 0 ? 'true' : false,
+                    vacation: allocation.vacation ? 'true' : false,
+                    blocks: allocation.blocks
+                };
+            },
+
+            getAllocation: function (day, allocations, vacations) {
+                allocations = allocations || [];
+                vacations = vacations || [];
+                var result = {
+                    availability: this.maxHours,
+                    overbooked: 'no',
+                    blocks: [],
+                    vacation: false
+                };
+
+                vacations.forEach(function (vacation) {
+                    var start = moment(vacation.start);
+                    var end = moment(vacation.end);
+                    if (start.isSameOrBefore(day, 'day') && end.isSameOrAfter(day, 'day')) {
+                        result.vacation = true;
+                        result.availability = 0;
+                        result.blocks.push({
+                            label: 'Away'
+                        });
+                    }
+                }, this);
+
+                if (result.vacation) {
+                    return result;
+                }
+
+                allocations.forEach(function (allocation) {
+                    var start = allocation.start ? moment(allocation.start) : null;
+                    var end = allocation.end ? moment(allocation.end) : null;
+                    if (!start || start.isAfter(day, 'day')) {
+                        return;
+                    }
+                    if (end && end.isBefore(day, 'day')) {
+                        return;
+                    }
+                    var hoursIndex = (day.day() === 0) // sunday => index 6
+                        ? 6
+                        : day.day() - 1;
+                    var hours = (typeof allocation.hours[hoursIndex] !== 'undefined')
+                        ? allocation.hours[hoursIndex]
+                        : 0;
+                    if (hours) {
+                        result.availability -= hours;
+                        result.blocks.push({
+                            label: allocation.label,
+                            hours: hours
+                        });
+                    }
+                }, this);
+                return result;
+            }
+        });
+    </script>
+</dom-module>
