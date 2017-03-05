@@ -1,0 +1,42 @@
+{% extends 'Polymorph/Application/templates/page.html.twig' %}
+
+    {% block style %}
+        {{ parent() }}
+        body {
+            background-color: #fff;
+        }
+
+        polymorph-app {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+    {% endblock %}
+
+    {% block imports %}
+
+        <link rel="import" href="bower_components/polymer/polymer.html"/>
+        <link rel="import" href="bower_components/polymorph/src/Polymorph/Application/elements/polymorph-app.html?0.2.2"/><!-- with cache-id -->
+        <link rel="import" href="bower_components/polymorph/src/Polymorph/Application/elements/polymorph-app-canvas.html?0.2.2"/><!-- with cache-id -->
+        <link rel="import" href="bower_components/polymorph/src/Polymorph/Application/elements/polymorph-app-page.html?0.2.2"/><!-- with cache-id -->
+
+        <link rel="import" href="src/Availy/Application/elements/availy-app-canvas.html"/>
+
+        <link rel="import" href="{{ sharedStylesHref }}?{{ meta.version }}"/>
+    {% endblock %}
+
+    {% block body %}
+        <polymorph-app>
+            <availy-app-canvas>
+                {% block view %}
+                    <polymorph-app-page
+                            class="polymorph-partial"
+                            path="{{ view.path }}"
+                            element="{{ element }}"
+                            element-data="{{ elementData|json_encode }}">
+                        {{ content|raw }}
+                    </polymorph-app-page>
+                {% endblock %}
+            </availy-app-canvas>
+        </polymorph-app>
+    {% endblock %}
