@@ -1,0 +1,11 @@
+/.idea
+/.sass-cache
+/bower_components
+/node_modules
+/data
+/dev/**/reports
+/nbproject
+/node_modules
+/vendor
+.DS_Store
+.htaccess
