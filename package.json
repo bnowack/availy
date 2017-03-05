@@ -1,0 +1,27 @@
+{
+  "name": "availy dev",
+  "version": "0.0.1",
+  "scripts": {
+    "npm-fresh": "rm -rf ./node_modules && npm install",
+    "bower-fresh": "rm -rf ./bower_components && bower install",
+    "bower-fresh-o": "rm -rf ./bower_components && bower install -o",
+    "php-serve": "php -S 0.0.0.0:8889 dev/e2e/php-router.php",
+    "test-e2e": "./node_modules/.bin/karma start dev/e2e/config/karma.conf.js",
+    "test-js": "./node_modules/.bin/karma start dev/js-specs/config/karma.conf.js"
+  },
+  "private": true,
+  "devDependencies": {
+    "jquery": "*",
+    "bower": "^1.7.9",
+    "cucumber": "1.*",
+    "karma": "*",
+    "karma-chrome-launcher": "^1.0.1",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-junit-reporter": "^1.0.0",
+    "karma-phantomjs-launcher": "^1.0.0",
+    "phantomjs-prebuilt": "^2.1.7",
+    "karma-coverage": "^1.1.0",
+    "karma-cukes": "1.*",
+    "polymer-cli": "^0.12.0"
+  }
+}

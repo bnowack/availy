@@ -1,0 +1,33 @@
+{
+  "name": "availy",
+  "version": "0.1.0",
+  "homepage": "https://github.com/bnowack/availy",
+  "description": "Availability Calendar",
+  "authors": [
+    "Benjamin Nowack <mail@bnowack.de>"
+  ],
+  "keywords": [
+    "availability"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bnowack/availy.git"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "dev",
+    "vendor",
+    "composer.*",
+    "**/*.php"
+  ],
+  "dependencies": {
+    "polymorph": "bnowack/polymorph#0.2.*",
+    "moment": "^2.17.1"
+  },
+  "devDependencies": {
+    "living-cukes": "bnowack/living-cukes#^0.1.*"
+  }
+}

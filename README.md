@@ -1,0 +1,3 @@
+# Availy
+
+Simple availability calendar

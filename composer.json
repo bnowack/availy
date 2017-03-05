@@ -1,0 +1,25 @@
+{
+  "name": "bnowack/availy",
+  "description": "Availability Calendar",
+  "authors": [
+    {
+      "name": "Benjamin Nowack",
+      "email": "mail@bnowack.de"
+    }
+  ],
+  "require": {
+    "bnowack/polymorph": "0.2.*"
+  },
+  "require-dev": {
+    "phpspec/phpspec": "2.4.0",
+    "phpunit/phpunit": "4.8.24",
+    "ext-xdebug": ">=2.2.1",
+    "henrikbjorn/phpspec-code-coverage": "1.0.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Availy\\": "src/Availy",
+      "spec\\Availy\\": "src/Availy"
+    }
+  }
+}
