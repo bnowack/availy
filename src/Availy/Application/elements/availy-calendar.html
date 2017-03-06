@@ -87,10 +87,6 @@
                 border-left: 1px solid var(--availy-gray-2);
             }
 
-            .day[data-other-month="true"] > * {
-                opacity: 0.3;
-            }
-
             .day > .number {
                 font-size: 0.9em;
                 position: absolute;
@@ -98,6 +94,22 @@
                 top: 8px;
                 font-family: "Open Sans", sans-serif;
             }
+
+            /* other month */
+
+            .day[data-other-month="true"] > * {
+                opacity: 0.3;
+            }
+
+            /* today */
+
+            .day[data-today="true"] > .number {
+                background-color: var(--availy-blue-2);
+                color: var(--availy-blue-1);
+                border-radius: 2px;
+                padding: 0 4px;
+            }
+
 
             /* availability */
 
@@ -136,14 +148,14 @@
             }
 
             .block {
-                background-color: #eef9ff;
+                background-color: var(--availy-blue-1);
                 border-radius: 2px;
                 margin-bottom: 4px;
                 padding: 2px 8px;
                 font-size: 0.8em;
                 display: flex;
                 flex-direction: row;
-                color: #0099c1;
+                color: var(--availy-blue-2);
             }
 
             .block .label {
@@ -184,7 +196,7 @@
             <template is="dom-repeat" items="{{weeks}}">
                 <div class="week">
                     <template is="dom-repeat" items="{{item}}">
-                        <div class="day" data-other-month$="{{item.otherMonth}}">
+                        <div class="day" data-other-month$="{{item.otherMonth}}" data-today$="{{item.today}}">
                             <span class="number">{{item.number}}</span>
                             <span class="availability"
                                   data-hours$="{{item.availability}}"
@@ -254,6 +266,7 @@
             drawWeeks: function (month, year) {
                 var start = moment(new Date(year, month, 1));
                 var end = moment(new Date(year, month, 1)).endOf('month');
+                var today = moment();
                 // start on a monday
                 while (start.day() !== 1) {
                     start.day(start.day() - 1);
@@ -267,7 +280,7 @@
                 var week = [];
                 var day = start;
                 while (day.isSameOrBefore(end, 'day')) {
-                    week.push(this.getDayData(day));
+                    week.push(this.getDayData(day, today));
                     // proceed
                     day.day(day.day() + 1);
                     // skip sat/sun
@@ -282,11 +295,12 @@
                 this.set('weeks', weeks);
             },
 
-            getDayData: function (day) {
+            getDayData: function (day, today) {
                 var allocation = this.getAllocation(day, this.allocations, this.vacations);
                 return {
                     number: day.format('ddd Do'),
-                    otherMonth: day.month() !== this.month ? 'true' : 'false',
+                    today: day.isSame(today, 'day') ? 'true': false,
+                    otherMonth: day.month() !== this.month ? 'true' : false,
                     availability: allocation.availability,
                     overbooked: allocation.availability < 0 ? 'true' : false,
                     vacation: allocation.vacation ? 'true' : false,
