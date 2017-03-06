@@ -1,5 +1,5 @@
 {
-  "name": "availy dev",
+  "name": "availy-dev",
   "version": "0.0.1",
   "scripts": {
     "npm-fresh": "rm -rf ./node_modules && npm install",
