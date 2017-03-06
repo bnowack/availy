@@ -5,7 +5,7 @@
   "meta": {
     "name": "Availy",
     "description": "Benjamin Nowack's availability",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "language": "en",
     "type" : {
       "facebook": "website",
@@ -32,7 +32,7 @@
       "call": "Polymorph\\Application\\ApplicationController::handleTemplateRequest",
       "template": "Polymorph/Application/templates/content.html.twig",
       "pageTitle": "Availy",
-      "element": "src/Availy/Application/elements/availy-calendar.html",
+      "element": "src/Availy/Application/elements/availy-calendar.html?v=0.2.0",
       "elementData": {
         "allocationsHref": "/data/allocations.json",
         "vacationsHref": "/data/vacations.json"
