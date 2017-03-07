@@ -216,8 +216,8 @@
             </template>
         </div>
 
-        <iron-ajax id="allocations" url="{{allocationsHref}}" handle-as="json" last-response="{{allocations}}"></iron-ajax>
-        <iron-ajax id="vacations" url="{{vacationsHref}}" handle-as="json" last-response="{{vacations}}"></iron-ajax>
+        <iron-ajax id="allocations" url="{{allocationsHref}}?{{versionSuffix}}" handle-as="json" last-response="{{allocations}}"></iron-ajax>
+        <iron-ajax id="vacations" url="{{vacationsHref}}?{{versionSuffix}}" handle-as="json" last-response="{{vacations}}"></iron-ajax>
     </template>
 
     <script>
@@ -231,6 +231,10 @@
                 allocations: Array,
                 vacationsHref: String,
                 vacations: Array,
+                versionSuffix: {
+                    type: String,
+                    value: Math.random().toString()
+                },
                 maxHours: {
                     type: Number,
                     value: 6.5
