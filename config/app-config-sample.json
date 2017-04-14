@@ -1,0 +1,43 @@
+{
+  "base": [
+    "/"
+  ],
+  "meta": {
+    "name": "Availy",
+    "description": "John Doe's availability",
+    "version": "0.2.2",
+    "language": "en",
+    "type" : {
+      "facebook": "website",
+      "schema": "WebSite"
+    },
+    "url": "http://",
+    "titleSuffix": " - John Doe",
+    "robots": "index,follow",
+    "viewport": "width=device-width, initial-scale=1"
+  },
+  "icons": {
+    "browser": "favicon.ico",
+    "app": "src/Availy/Application/img/touch-icon.png",
+    "facebook": "src/Availy/Application/img/touch-icon.png",
+    "schema": "src/Availy/Application/img/touch-icon.png"
+  },
+  "templates": {
+    "page": "src/Availy/Application/templates/page.html.twig"
+  },
+  "startupBgColor": "#fff",
+  "sharedStylesHref": "src/Availy/Application/elements/availy-shared-styles.html",
+  "routes": {
+    "/": {
+      "call": "Polymorph\\Application\\ApplicationController::handleTemplateRequest",
+      "template": "Polymorph/Application/templates/content.html.twig",
+      "pageTitle": "Availy",
+      "element": "src/Availy/Application/elements/availy-calendar.html?v=0.2.2",
+      "elementData": {
+        "allocationsHref": "/data/allocations-sample.json",
+        "vacationsHref": "/data/vacations-sample.json",
+        "maxHours": [6, 7, 6, 7, 6]
+      }
+    }
+  }
+}
