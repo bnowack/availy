@@ -4,6 +4,7 @@
 /data/databases
 /data/vacations.json
 /data/allocations.json
+/config/app-config.json
 /dev/**/reports
 /nbproject
 /vendor
