@@ -205,7 +205,7 @@
                             <div class="blocks">
                                 <template is="dom-repeat" items="{{item.blocks}}">
                                     <div class="block">
-                                        <span class="label">{{item.label}}</span>
+                                        <span class="label" title="{{item.info}}">{{item.label}}</span>
                                         <span class="hours">{{item.hours}}h</span>
                                     </div>
                                 </template>
@@ -235,10 +235,7 @@
                     type: String,
                     value: Math.random().toString()
                 },
-                maxHours: {
-                    type: Number,
-                    value: 6.5
-                }
+                maxHours: Array
             },
 
             observers: [
@@ -313,54 +310,65 @@
             },
 
             getAllocation: function (day, allocations, vacations) {
-                allocations = allocations || [];
-                vacations = vacations || [];
+                allocations = allocations || {};
+                vacations = vacations || {};
+                var dayIndex = (day.day() === 0) // sunday => index 6
+                    ? 6
+                    : day.day() - 1;
                 var result = {
-                    availability: this.maxHours,
+                    availability: this.maxHours[dayIndex],
                     overbooked: 'no',
                     blocks: [],
                     vacation: false
                 };
 
-                vacations.forEach(function (vacation) {
-                    var start = moment(vacation.start);
-                    var end = moment(vacation.end);
-                    if (start.isSameOrBefore(day, 'day') && end.isSameOrAfter(day, 'day')) {
-                        result.vacation = true;
-                        result.availability = 0;
-                        result.blocks.push({
-                            label: 'Away'
-                        });
-                    }
-                }, this);
-
-                if (result.vacation) {
+                var currentVacation = this.getCurrentValue(day, vacations);
+                if (currentVacation) {
+                    result.vacation = true;
+                    result.availability = 0;
+                    result.blocks.push({
+                        label: 'Away',
+                        info: currentVacation
+                    });
                     return result;
                 }
 
-                allocations.forEach(function (allocation) {
-                    var start = allocation.start ? moment(allocation.start) : null;
-                    var end = allocation.end ? moment(allocation.end) : null;
-                    if (!start || start.isAfter(day, 'day')) {
-                        return;
+                var currentHours;
+                for (var project in allocations) {
+                    if (!allocations.hasOwnProperty(project)) {
+                        continue;
                     }
-                    if (end && end.isBefore(day, 'day')) {
-                        return;
+                    currentHours = this.getCurrentValue(day, allocations[project]);
+                    if (currentHours) {
+                        var projectHours = (typeof currentHours[dayIndex] !== 'undefined')
+                            ? currentHours[dayIndex]
+                            : 0;
+                        if (projectHours) {
+                            result.availability -= projectHours;
+                            result.blocks.push({
+                                label: project,
+                                hours: projectHours,
+                                info: project
+                            });
+                        }
                     }
-                    var hoursIndex = (day.day() === 0) // sunday => index 6
-                        ? 6
-                        : day.day() - 1;
-                    var hours = (typeof allocation.hours[hoursIndex] !== 'undefined')
-                        ? allocation.hours[hoursIndex]
-                        : 0;
-                    if (hours) {
-                        result.availability -= hours;
-                        result.blocks.push({
-                            label: allocation.label,
-                            hours: hours
-                        });
+                }
+                return result;
+            },
+
+            getCurrentValue: function (day, dateEntries) {
+                var result = null;
+                for (var date in dateEntries) {
+                    if (!dateEntries.hasOwnProperty(date)) {
+                        continue;
                     }
-                }, this);
+                    var start = moment(date);
+                    if (start.isAfter(day, 'day')) {
+                        break;
+                    } else {
+                        result = dateEntries[date];
+                    }
+                }
                 return result;
             }
         });
