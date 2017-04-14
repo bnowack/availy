@@ -1,0 +1,27 @@
+RewriteEngine On
+RewriteBase /
+
+# Hide the project's database directory
+RedirectMatch 404 /data/databases
+
+# Hide configuration files
+RedirectMatch 404 /config/
+
+# Don't load roboto font
+RedirectMatch 404 /bower_components/font-roboto/roboto.html
+
+# Redirect dynamic requests to the front controller.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule .* vendor/bnowack/polymorph/src/index.php [L]
+
+# Compress text output
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json
+    <IfModule mod_headers.c>
+    Header append Vary User-Agent
+    </IfModule>
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+</IfModule>
+
