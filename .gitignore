@@ -3,7 +3,7 @@
 /node_modules
 /data/databases
 /data/vacations.json
-/data/allocations.json
+/data/allocations-*.json
 /config/app-config.json
 /dev/**/reports
 /nbproject
