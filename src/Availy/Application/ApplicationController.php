@@ -23,8 +23,9 @@ class ApplicationController extends PolymorphApplicationController
         $response = [];
         foreach ($routeOptions->files as $path) {
             $data = json_decode(file_get_contents(POLYMORPH_APP_DIR . $path), true);
-            $response = array_merge($response, $data);
+            $response = array_merge_recursive($response, $data);
         }
+
         return new JsonResponse($response);
     }
 }
