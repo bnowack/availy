@@ -186,9 +186,10 @@
         <header>
             <availy-month-nav month="{{month}}" year="{{year}}"></availy-month-nav>
             <div class="rates">
-                <strong>Rates:</strong>
-                <span class="rate">Concept / Design / Development: <strong>100€/h</strong></span>
-                <span class="rate">Content Management / Maintenance: <strong>50€/h</strong></span>
+                <strong>Services:</strong>
+                <template is="dom-repeat" items="{{services}}">
+                    <span class="rate">{{item.label}} (<strong>{{item.rate}}</strong>)</span>
+                </template>
             </div>
         </header>
 
@@ -235,7 +236,8 @@
                     type: String,
                     value: Math.random().toString()
                 },
-                maxHours: Array
+                maxHours: Array,
+                rates: Object
             },
 
             observers: [
